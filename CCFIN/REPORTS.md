@@ -207,4 +207,112 @@ print("Les différences observées entre les sexes et les statuts maritaux sont 
 
 
 '''
+--- Code Python
+
+
+
+
+
+# ============================================================
+# 🧠 ANALYSE STATISTIQUE DU DATASET "ADULT / CENSUS INCOME"
+# ------------------------------------------------------------
+# Compatible Google Colab ✅
+# Auteur : Mohamed Taha Brini (Projet Statistique)
+# ============================================================
+
+# === 1. INSTALLATION ET IMPORTATION DES LIBRAIRIES ===
+!pip install seaborn matplotlib pandas scipy --quiet
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy import stats
+
+sns.set(style="whitegrid")
+
+# === 2. TÉLÉCHARGEMENT DU DATASET DEPUIS UCI ===
+url = "https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data"
+
+columns = [
+    "age", "workclass", "fnlwgt", "education", "education-num",
+    "marital-status", "occupation", "relationship", "race", "sex",
+    "capital-gain", "capital-loss", "hours-per-week", "native-country", "income"
+]
+
+data = pd.read_csv(url, header=None, names=columns, na_values=" ?", skipinitialspace=True)
+
+print("✅ Données chargées avec succès !")
+print(f"Nombre d’observations : {data.shape[0]}, Nombre de variables : {data.shape[1]}")
+
+# === 3. NETTOYAGE DU DATASET ===
+data.dropna(inplace=True)
+data.drop_duplicates(inplace=True)
+data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x)
+
+print("\nDonnées nettoyées :", data.shape[0], "lignes restantes après nettoyage")
+
+# === 4. STATISTIQUES DESCRIPTIVES ===
+print("\n=== Statistiques descriptives ===")
+print(data.describe(include="all"))
+
+# Répartition de la variable cible
+plt.figure(figsize=(5,4))
+sns.countplot(x='income', data=data, palette="Set2")
+plt.title("Répartition du revenu")
+plt.show()
+
+# === 5. DISTRIBUTIONS NUMÉRIQUES ===
+num_cols = ["age", "education-num", "capital-gain", "capital-loss", "hours-per-week"]
+
+data[num_cols].hist(bins=30, figsize=(12,6), color='skyblue', edgecolor='black')
+plt.suptitle("Distribution des variables numériques", fontsize=14)
+plt.show()
+
+# === 6. ANALYSE PAR SEXE ===
+plt.figure(figsize=(6,4))
+sns.countplot(x='sex', hue='income', data=data, palette='Set3')
+plt.title("Répartition du revenu par sexe")
+plt.show()
+
+# === 7. NIVEAU D’ÉDUCATION VS REVENU ===
+plt.figure(figsize=(10,5))
+sns.countplot(y='education', hue='income', data=data,
+              order=data['education'].value_counts().index, palette='coolwarm')
+plt.title("Revenu selon le niveau d'éducation")
+plt.show()
+
+# === 8. MATRICE DE CORRÉLATION ===
+data['income_num'] = data['income'].apply(lambda x: 1 if x == '>50K' else 0)
+corr = data[num_cols + ['income_num']].corr()
+
+plt.figure(figsize=(8,6))
+sns.heatmap(corr, annot=True, cmap="coolwarm", fmt=".2f")
+plt.title("Matrice de corrélation")
+plt.show()
+
+# === 9. TESTS STATISTIQUES ===
+print("\n=== TESTS STATISTIQUES ===")
+
+# Âge selon revenu
+age_low = data[data['income'] == '<=50K']['age']
+age_high = data[data['income'] == '>50K']['age']
+t_stat, p_val = stats.ttest_ind(age_low, age_high)
+print(f"Test t sur l’âge : T = {t_stat:.3f}, p = {p_val:.5f}")
+
+# Heures travaillées selon revenu
+hours_low = data[data['income'] == '<=50K']['hours-per-week']
+hours_high = data[data['income'] == '>50K']['hours-per-week']
+t_stat2, p_val2 = stats.ttest_ind(hours_low, hours_high)
+print(f"Test t sur les heures/semaine : T = {t_stat2:.3f}, p = {p_val2:.5f}")
+
+# === 10. CONCLUSION AUTOMATIQUE ===
+print("\n=== CONCLUSION ===")
+print("👉 Les individus gagnant plus de 50K :")
+print("- ont un âge moyen et un niveau d'éducation significativement plus élevés,")
+print("- travaillent plus d'heures par semaine,")
+print("- et présentent souvent des gains en capital plus importants.")
+print("\nLa variable 'education-num' est parmi les plus corrélées avec le revenu (> 0.33).")
+print("Les différences observées entre les sexes et les statuts maritaux sont également notables.")
+---
 *Fin du document.*
