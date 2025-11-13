@@ -1,4 +1,5 @@
 Rapport sur le jeu de données “Adult” (Census Income Dataset)
+
 Introduction
 
 L’analyse de données occupe aujourd’hui une place essentielle dans les domaines de l’économie, des politiques publiques et de l’intelligence artificielle. Parmi les jeux de données les plus utilisés pour l’apprentissage automatique figure le “Adult Dataset”, aussi connu sous le nom de Census Income Dataset. Ce jeu de données, extrait du recensement américain de 1994, est couramment exploité dans les projets de classification supervisée. Il permet notamment de prédire si un individu gagne plus ou moins de 50 000 dollars par an en fonction de ses caractéristiques démographiques et socio-économiques.
